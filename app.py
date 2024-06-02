@@ -30,20 +30,27 @@ if uploaded_file is not None:
         st.subheader('GeoDataFrame Information')
         st.write(gdf.head())
 
-        # Step 5: Plot the map
-        st.subheader('Plot of the Shapefile')
-        fig, ax = plt.subplots()
-        gdf.plot(ax=ax)
-        st.pyplot(fig)
+        # Step 5: Select a categorical column
+        columns = list(gdf.columns)
+        selected_column = st.selectbox('Choose a categorical column', columns)
 
-        # Step 6: Add interactive options
-        st.subheader('Custom Plotting Options')
-        column = st.selectbox('Choose column to color by', gdf.columns)
-        cmap = st.selectbox('Choose colormap', plt.colormaps())
+        if selected_column:
+            unique_values = gdf[selected_column].unique()
 
-        fig, ax = plt.subplots()
-        gdf.plot(column=column, cmap=cmap, legend=True, ax=ax)
-        st.pyplot(fig)
+            # Step 6: Assign values to each unique category
+            st.subheader(f'Assign values for {selected_column}')
+            assigned_values = {}
+            for value in unique_values:
+                assigned_values[value] = st.number_input(f'Value for {value}', value=0)
+
+            # Add the assigned values as a new column to the GeoDataFrame
+            gdf['assigned_value'] = gdf[selected_column].map(assigned_values)
+
+            # Step 7: Plot the map based on the assigned values
+            st.subheader(f'Plot of the Shapefile colored by assigned values for {selected_column}')
+            fig, ax = plt.subplots()
+            gdf.plot(column='assigned_value', legend=True, ax=ax)
+            st.pyplot(fig)
     else:
         st.error("No .shp file found in the uploaded zip file")
 else:
@@ -54,5 +61,6 @@ st.subheader('Instructions')
 st.write("""
 1. Upload a zip file containing all shapefile parts (.shp, .shx, .dbf, .prj).
 2. View the initial plot of the shapefile.
-3. Use custom plotting options to visualize data on the map.
+3. Choose a categorical column and assign numerical values to each unique category.
+4. Plot the GeoDataFrame based on the assigned values.
 """)
