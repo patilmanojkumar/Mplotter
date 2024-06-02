@@ -44,7 +44,7 @@ if uploaded_file is not None:
             cols = st.beta_columns(num_columns)
             for i, value in enumerate(unique_values):
                 col = cols[i % num_columns]
-                assigned_values[value] = col.number_input(f'Value for {value}', value=0,format="%.4f")
+                assigned_values[value] = col.number_input(f'Value for {value}', value=0)
 
             # Add the assigned values as a new column to the GeoDataFrame
             gdf['assigned_value'] = gdf[selected_column].map(assigned_values)
