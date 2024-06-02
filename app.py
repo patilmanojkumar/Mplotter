@@ -25,8 +25,8 @@ def load_shapefile(zip_file):
 if uploaded_zipfile:
     gdf = load_shapefile(uploaded_zipfile)
     
-    # Display the GeoDataFrame
-    st.write(gdf)
+    # Display the head of the GeoDataFrame
+    st.dataframe(gdf.head())
     
     # Select the column in the shapefile to match user input data
     merge_column_gdf = st.selectbox("Select the column in the shapefile to merge on", gdf.columns)
