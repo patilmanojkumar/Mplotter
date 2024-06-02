@@ -41,7 +41,7 @@ if uploaded_file is not None:
             st.subheader(f'Assign values for {selected_column}')
             assigned_values = {}
             num_columns = 4  # Adjust this value based on your preference
-            cols = st.beta_columns(num_columns)
+            cols = st.columns(num_columns)
             for i, value in enumerate(unique_values):
                 col = cols[i % num_columns]
                 assigned_values[value] = col.number_input(f'Value for {value}', value=0)
@@ -67,7 +67,3 @@ st.write("""
 3. Choose a categorical column and assign numerical values to each unique category.
 4. Plot the GeoDataFrame based on the assigned values.
 """)
-
-
-
-
