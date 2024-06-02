@@ -3,6 +3,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import zipfile
 import os
+import pandas as pd
 
 st.title('Geospatial Data Visualization with GeoPandas')
 
@@ -37,16 +38,17 @@ if uploaded_file is not None:
         if selected_column:
             unique_values = gdf[selected_column].unique()
 
-            # Step 6: Assign values to each unique category
+            # Create a DataFrame for user input
+            value_df = pd.DataFrame(unique_values, columns=[selected_column])
+            value_df['Assigned Value'] = 0.0
+
+            # Step 6: Generate input fields for each unique value
             st.subheader(f'Assign values for {selected_column}')
             assigned_values = {}
-            num_columns = 4  # Adjust this value based on your preference
-            cols = st.columns(num_columns)
-            for i, value in enumerate(unique_values):
-                col = cols[i % num_columns]
-                assigned_values[value] = col.number_input(f'Value for {value}', value=0)
+            for value in unique_values:
+                assigned_values[value] = st.number_input(f'Value for {value}', value=0.0, format="%.4f")
 
-            # Add the assigned values as a new column to the GeoDataFrame
+            # Map the assigned values back to the GeoDataFrame
             gdf['assigned_value'] = gdf[selected_column].map(assigned_values)
 
             # Step 7: Plot the map based on the assigned values
