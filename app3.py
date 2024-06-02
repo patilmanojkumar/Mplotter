@@ -1,10 +1,10 @@
 import streamlit as st
 import geopandas as gpd
-import plotly.express as px
+import matplotlib.pyplot as plt
 import zipfile
 import os
 
-st.title('Map Plotter')
+st.title('Geospatial Data Visualization with GeoPandas')
 
 # Step 1: Upload a zip file containing shapefile parts
 uploaded_file = st.file_uploader("Choose a zip file containing shapefile", type="zip")
@@ -40,25 +40,17 @@ if uploaded_file is not None:
             # Step 6: Assign values to each unique category
             st.subheader(f'Assign values for {selected_column}')
             assigned_values = {}
-            num_columns = 4  # Adjust this value based on your preference
-            cols = st.columns(num_columns)
-            for i, value in enumerate(unique_values):
-                col = cols[i % num_columns]
-                assigned_values[value] = col.number_input(f'Value for {value}', value=0)
+            for value in unique_values:
+                assigned_values[value] = st.number_input(f'Value for {value}', value=0)
 
             # Add the assigned values as a new column to the GeoDataFrame
             gdf['assigned_value'] = gdf[selected_column].map(assigned_values)
 
-            # Step 7: Plot the map based on the assigned values using Plotly
+            # Step 7: Plot the map based on the assigned values
             st.subheader(f'Plot of the Shapefile colored by assigned values for {selected_column}')
-            fig = px.choropleth(gdf,
-                                geojson=gdf.geometry,
-                                locations=gdf.index,
-                                color='assigned_value',
-                                color_continuous_scale="Viridis",
-                                projection="mercator")
-            fig.update_geos(fitbounds="locations", visible=False)
-            st.plotly_chart(fig)
+            fig, ax = plt.subplots()
+            gdf.plot(column='assigned_value', legend=True, ax=ax)
+            st.pyplot(fig)
     else:
         st.error("No .shp file found in the uploaded zip file")
 else:
