@@ -4,6 +4,7 @@ import plotly.express as px
 import json
 import tempfile
 import os
+import zipfile
 
 st.title('Map Plotter')
 
@@ -63,8 +64,8 @@ if uploaded_file is not None:
 
         if selected_column:
             # Rest of the code for assigning values, plotting, and instructions as before
-    else:
-        st.write("Please upload a zip file containing shapefile or a JSON file to visualize")
+else:
+    st.write("Please upload a zip file containing shapefile or a JSON file to visualize")
 
 # Instructions and additional info
 st.subheader('Instructions')
