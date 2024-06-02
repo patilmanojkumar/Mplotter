@@ -2,21 +2,28 @@ import streamlit as st
 import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
+from zipfile import ZipFile
+import os
 
 # Title of the app
 st.title("Shapefile Map Plotter with User Input Data")
 
-# File uploader to upload the shapefile
-uploaded_shapefile = st.file_uploader("Choose a .shp file", type=["shp"])
+# File uploader to upload the zip file containing the shapefile
+uploaded_zipfile = st.file_uploader("Choose a .zip file containing the shapefile", type=["zip"])
 
-# Function to load the shapefile and return a GeoDataFrame
-def load_shapefile(file):
-    gdf = gpd.read_file(file)
-    return gdf
+# Function to extract and load the shapefile and return a GeoDataFrame
+def load_shapefile(zip_file):
+    with ZipFile(zip_file, 'r') as zip_ref:
+        zip_ref.extractall("extracted_shapefile")
+    for file in os.listdir("extracted_shapefile"):
+        if file.endswith(".shp"):
+            shapefile_path = os.path.join("extracted_shapefile", file)
+            gdf = gpd.read_file(shapefile_path)
+            return gdf
 
-# If a shapefile is uploaded
-if uploaded_shapefile:
-    gdf = load_shapefile(uploaded_shapefile)
+# If a zip file is uploaded
+if uploaded_zipfile:
+    gdf = load_shapefile(uploaded_zipfile)
     
     # Display the GeoDataFrame
     st.write(gdf)
@@ -46,5 +53,9 @@ if uploaded_shapefile:
     merged_gdf.plot(column='Value', ax=ax, legend=True)
     st.pyplot(fig)
     
+    # Clean up extracted files
+    for file in os.listdir("extracted_shapefile"):
+        os.remove(os.path.join("extracted_shapefile", file))
+    os.rmdir("extracted_shapefile")
 else:
-    st.info("Please upload a shapefile.")
+    st.info("Please upload a zip file containing the shapefile.")
