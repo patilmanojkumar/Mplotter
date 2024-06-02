@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import zipfile
 import os
 
-st.title('Geospatial Data Visualization with GeoPandas')
+st.title('Map Plotter')
 
 # Step 1: Upload a zip file containing shapefile parts
 uploaded_file = st.file_uploader("Choose a zip file containing shapefile", type="zip")
